@@ -32,26 +32,37 @@ Vue.use(ElementUI)
 import index from './components/index.vue'
 import detail from './components/detail.vue'
 import login from './components/login.vue'
-import user from './components/user.vue'
+import user from './components/user/user.vue'
+import userindex from './components/user/index.vue'
+import list from './components/user/list.vue'
+import orderdetail from './components/user/detail.vue'
 // 设置路由规则
 const routes = [
   { path: '/index', component: index },
   { path: '/detail/:id', component: detail },
   { path: '/login', component: login },
   { path: '', redirect: '/index' },
-  { path:'/user',component:user,beforeEnter: (to, from, next) => {
-    //发请求判断
-    axios.get("site/account/islogin").then(res=>{
-      //如果没有登录打回登录页
-      if(res.data.code=='nologin') {
-        Vue.prototype.$message.error('请先登录');
-        //打回登录页
-        router.push('/login');
-      }else {
-        next()
-      }
-    })
-  }}
+  {
+    path: '/user', component: user, beforeEnter: (to, from, next) => {
+      //发请求判断
+      axios.get("site/account/islogin").then(res => {
+        //如果没有登录打回登录页
+        if (res.data.code == 'nologin') {
+          Vue.prototype.$message.error('请先登录');
+          //打回登录页
+          router.push('/login');
+        } else {
+          next()
+        }
+      })
+    },
+    children: [
+      { path: 'index', component: userindex },
+      { path: 'list', component: list },
+      { path: 'detail', component: orderdetail },
+      {path:'',redirect:'index'},
+    ]
+  }
 ]
 //实例化路由
 const router = new VueRouter({
